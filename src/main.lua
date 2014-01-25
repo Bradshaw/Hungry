@@ -7,7 +7,7 @@ function love.load(arg)
 	end
 
 	require("useful")
-
+	require("levelgen")
 	require("radar")
 	require("player")
 	require("weapon")

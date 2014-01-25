@@ -3,6 +3,21 @@ level = {}
 
 level.tilesize = 32
 
+
+level.rooms = {}
+
+local i = 1
+while love.filesystem.exists("images/rooms/room_"..string.format("%03d",i)..".png") and love.filesystem.exists("images/rooms/room_"..string.format("%03d",i)..".lua") do
+	print(i)
+	level.rooms = {
+		image = love.graphics.newImage("images/rooms/room_"..string.format("%03d",i)..".png"),
+		meta = require("images/rooms/room_"..string.format("%03d",i))
+	}
+	i = i+1
+end
+
+
+
 function level.new(  )
 	local self = setmetatable({},{__index = level_mt})
 
@@ -31,7 +46,15 @@ function level.new(  )
 		end
 	end
 
+	self.map = {}
+
+
 	return self
+end
+
+function level_mt:addModule(module, index)
+	local index = index or math.random(1,#level.rooms)
+
 end
 
 function level_mt:retex(  )
