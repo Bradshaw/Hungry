@@ -70,8 +70,8 @@ function state:update(dt)
 		v:update(dt)
 	end
 
-	--[[
-	while #enemy.all<100 do
+	---[[
+	while #enemy.all<10 do
 		if math.random()>0.5 then
 			enemy.new(math.random()*640,math.random(0,1)*640)
 		else
@@ -116,10 +116,6 @@ function state:draw()
 	for i,v in ipairs(weapon.all) do
 		v:draw()
 	end	
-
-	for i,v in ipairs(player.all) do
-		v:draw()
-	end
 	enemy.draw()
 
 	bullet.draw()
@@ -131,13 +127,16 @@ function state:draw()
 
 	map:drawShadow(player.all[1].x,player.all[1].y)
 
-	for i,v in ipairs(player.all) do
-		v:drawShadow()
-	end
+	
+	player.all[1]:drawShadow()
 
 
 	map:drawMap()
 	radar.draw()
+
+	for i,v in ipairs(player.all) do
+		v:draw()
+	end
 
 
 	love.graphics.pop()

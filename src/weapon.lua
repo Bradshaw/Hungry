@@ -20,7 +20,7 @@ function weapon.pistol( ... )
 		if weap.time==0 then
 			shake=shake+0.1
 			weap.time = weap.cooldown
-			bullet.pistol(x, y, dx*1200, dy*1200)
+			bullet.pistol(x, y, dx*800, dy*800)
 		end
 	end
 
@@ -30,7 +30,7 @@ end
 function weapon.ping( ... )
 	local self = weapon.new( ... )
 
-	self.cooldown = 2
+	self.cooldown = 3
 	self.fire = function(weap, x, y)
 		if weap.time==0 then
 			weap.time = weap.cooldown
@@ -45,10 +45,10 @@ rails = {}
 
 function weapon.rail( ... )
 	local self = weapon.new( ... )
-	self.cooldown = 0.5
+	self.cooldown = 0.2
 	self.fire =  function(weap, x, y, dx, dy)
 		if weap.time==0 then
-			shake = shake + 0.5
+			shake = shake + 0.25
 			weap.time = weap.cooldown
 			local xh = x+dx*1000
 			local yh = y+dy*1000

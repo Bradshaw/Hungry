@@ -37,7 +37,7 @@ function radar.update(dt)
 	love.graphics.setLineWidth(20)
 	love.graphics.circle("line",radar.x,radar.y,radar.r1)
 	love.graphics.setLineWidth(1)
-	love.graphics.setColor(192,64,64,255/(radar.r1/50))
+	love.graphics.setColor(192,64,64,255/(radar.r1/100))
 	for i,v in ipairs(enemy.all) do
 		local dx = radar.x - v.x
 		local dy = radar.y - v.y

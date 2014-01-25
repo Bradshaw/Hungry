@@ -9,9 +9,16 @@ end
 function state:enter()
 	world = love.physics.newWorld(0, 0, true)
 	world:setSleepingAllowed(false)
-	needplayers = 1
+
+	world:setCallbacks(function(...)
+		for i,v in ipairs(wcb) do
+			v(...)
+		end
+	end)	
+
+	needplayers = 2
 	player.all = {}
-	wait = 2
+	wait = 0
 	timeleft = wait
 
 	
@@ -68,6 +75,10 @@ function state:update(dt)
 			if joystick:isDown(b) then
 				timeleft = wait
 				table.insert(player.all, player.new(joystick))
+				if #player.all==2 then
+					player.all[2].main = weapon.ping()
+					player.all[2].secondary = weapon.rail()
+				end
 				table.remove(allJoysticks, i)
 			end
 		end

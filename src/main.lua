@@ -1,6 +1,10 @@
 function love.load(arg)
 
 	math.randomseed(os.time())
+	wcb = {}
+	function addPhysCallback(f)
+		table.insert(wcb, f)
+	end
 
 	require("useful")
 

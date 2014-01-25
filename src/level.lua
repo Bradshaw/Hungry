@@ -20,7 +20,7 @@ function level.new(  )
 		for j=1,self.ysize do
 			if math.random(1,6)==1 then
 				local wall = {}
-				wall.body = love.physics.newBody(world, i*level.tilesize, j*level.tilesize, "static") --place the body in the center of the world and make it dynamic, so it can move around
+				wall.body = love.physics.newBody(world, i*level.tilesize-level.tilesize/2, j*level.tilesize-level.tilesize/2, "static") --place the body in the center of the world and make it dynamic, so it can move around
 				wall.shape = love.physics.newRectangleShape( level.tilesize, level.tilesize ) --the ball's shape has a radius of 20
 				wall.fixture = love.physics.newFixture(wall.body, wall.shape, 1) -- Attach fixture to body and give it a density of 1.
 				wall.fixture:setUserData(self)

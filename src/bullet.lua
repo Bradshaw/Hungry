@@ -68,6 +68,10 @@ function bullet_mt:update( dt )
 		local dy = self.y-v.y
 		local d = math.sqrt(dx*dx+dy*dy)
 		if d<10 then
+			local speed = math.sqrt(self.dx*self.dx+self.dy*self.dy)
+			local nx = self.dx/speed
+			local ny = self.dy/speed
+			v.body:applyLinearImpulse(nx*5,ny*5)
 			self:doDamage(v)
 			return
 		end

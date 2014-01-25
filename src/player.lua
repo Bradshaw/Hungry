@@ -6,17 +6,19 @@ function player.new( joystick )
 	local self = setmetatable({},{__index = player_mt})
 	self.joystick = joystick
 
-	self.pistol = weapon.ping()-- weapon.pistol()
-	self.bigWeapon = weapon.pistol()
+	self.isPlayer = true
+
+	self.main = weapon.pistol()
+	self.secondary = nil --weapon.rail()
 
 	self.speed = 100
 	self.aimx = 0
 	self.aimy = -1
 
-	self.x = 0
-	self.y = 0
+	self.x = math.random(0,600)
+	self.y = math.random(0,600)
 
-	self.body = love.physics.newBody(world, math.random(0,600), math.random(0,600), "dynamic") --place the body in the center of the world and make it dynamic, so it can move around
+	self.body = love.physics.newBody(world, self.x, self.y, "dynamic") --place the body in the center of the world and make it dynamic, so it can move around
 	self.body:setLinearDamping(20)
 	self.body:setFixedRotation(true)
 	self.body:setMass(1)
@@ -24,13 +26,24 @@ function player.new( joystick )
 	self.fixture = love.physics.newFixture(self.body, self.shape, 1) -- Attach fixture to body and give it a density of 1.
 	self.fixture:setUserData(self)
 	self.fixture:setRestitution(0.1) --let the ball bounce
-
 	return self
 end
 
 
+function player_mt:whack( enemy )
+	shake = 0.5
+	local dx = self.x-enemy.x
+	local dy = self.y-enemy.y
+	local d = math.sqrt(dx*dx+dy*dy)
+	if d ~= 0 then
+		local nx = dx/d
+		local ny = dy/d
+		self.body:applyLinearImpulse(nx*4,ny*4)
+	end
+end
+
 function player_mt:getWeapon()
-	return (self.bigWeapon or self.pistol)
+	return (self.secondary or self.main)
 end
 
 function player_mt:update( dt )
@@ -61,16 +74,16 @@ function player_mt:update( dt )
 		self.aimy = ny
 	end
 
-	self.pistol:updateOnCharacter(dt)
-	if self.bigWeapon then
-		self.bigWeapon:updateOnCharacter(dt)
+	self.main:updateOnCharacter(dt)
+	if self.secondary then
+		self.secondary:updateOnCharacter(dt)
 	end
 	if self.joystick:isDown(9) then
 		self:getWeapon():fire(self.x,self.y,self.aimx,self.aimy)
 	end
 	if self.joystick:isDown(8) then
 		--radar.ping(self.x, self.y)
-		self.pistol:fire(self.x,self.y,self.aimx,self.aimy)
+		self.main:fire(self.x,self.y,self.aimx,self.aimy)
 	end
 
 	self.x = self.body:getX()

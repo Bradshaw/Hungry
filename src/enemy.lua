@@ -3,9 +3,27 @@ enemy = {}
 
 enemy.all = {}
 
+addPhysCallback(function(f1, f2, contact)
+	local u1 = f1:getUserData()
+	local u2 = f2:getUserData()
+	if u1.isEnemy then
+		if u2.isPlayer then
+			u2:whack(u1)
+		end
+	end
+	if u2.isEnemy then
+		if u1.isPlayer then
+			u1:whack(u2)
+		end
+	end
+	
+end)
+
+
 function enemy.new( x, y )
 	local self = setmetatable({},{__index = enemy_mt})
 
+	self.isEnemy = true
 	local wallHit = false
 	while not wallHit do
 		self.x = math.random(0,640)
