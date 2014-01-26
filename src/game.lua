@@ -71,7 +71,7 @@ function state:update(dt)
 	end
 
 	---[[
-	while #enemy.all<20 do
+	while #enemy.all<0 do
 		if math.random()>0.5 then
 			enemy.new(math.random()*640,math.random(0,1)*640)
 		else

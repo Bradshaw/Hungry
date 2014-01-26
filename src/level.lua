@@ -54,7 +54,7 @@ function level.new(  )
 	self.doors = {}
 	self.blocked = {}
 	self.images = {}
-	self:addModule(0,0,2)
+	self:addModule(0,0,1)
 	for i=1,50 do
 		self:append()
 	end
@@ -76,9 +76,9 @@ function level.new(  )
 		local w = 0
 		if v.t == "left" or v.t == "right" then
 			w = 6
-			h = 50
+			h = 70
 		else
-			w = 50
+			w = 70
 			h = 6
 		end
 		local wall = {}
@@ -96,7 +96,7 @@ function level.new(  )
 end
 
 function level_mt:append()
-	local index = math.random(1,#level.rooms)
+	local index = math.random(2,#level.rooms)
 	local r = level.rooms[index]
 	local door = r.meta.exits[math.random(1,#r.meta.exits)]
 	local coord
@@ -176,7 +176,7 @@ function level_mt:isDupe(a)
 	return false
 end
 function level_mt:addModule(x, y, index, discard)
-	local index = index or math.random(1,#level.rooms)
+	local index = index or math.random(2,#level.rooms)
 	local r = level.rooms[index]
 
 	for i,v in ipairs(r.meta.colliders) do

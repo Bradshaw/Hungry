@@ -18,8 +18,8 @@ function player.new( joystick )
 	self.aimx = 0
 	self.aimy = -1
 
-	self.x = math.random(20,80)
-	self.y = math.random(20,80)
+	self.x = math.random(64,64)
+	self.y = math.random(64,64)
 
 	self.body = love.physics.newBody(world, self.x, self.y, "dynamic") --place the body in the center of the world and make it dynamic, so it can move around
 	self.body:setLinearDamping(20)
