@@ -13,6 +13,7 @@ function love.load(arg)
 	require("weapon")
 	require("bullet")
 	require("enemy")
+	require("vitality")
 	require("level")
 
 
@@ -23,6 +24,7 @@ function love.load(arg)
 
 	gstate = require "gamestate"
 	lobby = require("lobby")
+	warping = require("warping")
 	game = require("game")
 	gstate.switch(lobby)
 end

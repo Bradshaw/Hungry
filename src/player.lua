@@ -12,7 +12,7 @@ function player.new( joystick, x, y )
 	self.isPlayer = true
 
 	self.main = weapon.pistol()
-	self.secondary = nil -- weapon.ping()
+	self.secondary = weapon.rail()
 
 	self.speed = 100
 	self.aimx = 0
@@ -32,6 +32,14 @@ function player.new( joystick, x, y )
 	return self
 end
 
+function player_mt:feed()
+	self.hp = self.hp+(100-self.hp)/3
+end
+
+function player_mt:regen( ... )
+	self = player.new( self.joystick, self.x, self.y)
+end
+
 
 function player_mt:whack( enemy )
 	shake = 0.5
@@ -43,11 +51,15 @@ function player_mt:whack( enemy )
 		local ny = dy/d
 		self.body:applyLinearImpulse(nx*4,ny*4)
 	end
-	--self.hp = math.max(0,self.hp-math.random(5,20))
+	self.hp = math.max(0,self.hp-math.random(5,20))
 end
 
 function player_mt:getWeapon()
 	return (self.secondary or self.main)
+end
+
+function player_mt:interact()
+	return false-- self.joystick:isDown(10)
 end
 
 function player_mt:update( dt )

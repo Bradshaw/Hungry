@@ -8,17 +8,17 @@ level.rooms = {}
 
 local i = 1
 while love.filesystem.exists("images/rooms/room_"..string.format("%03d",i)..".png") and love.filesystem.exists("images/rooms/room_"..string.format("%03d",i)..".lua") do
-	print("loading")
+	--print("loading")
 	level.rooms[i] = {
 		image = love.graphics.newImage("images/rooms/room_"..string.format("%03d",i)..".png"),
 		meta = require("images/rooms/room_"..string.format("%03d",i))
 	}
-	print(level.rooms[i])
+	--print(level.rooms[i])
 	i = i+1
 end
 
 for i,v in ipairs(level.rooms) do
-	print("lul"..i,v)
+	--print("lul"..i,v)
 end
 
 
@@ -136,7 +136,7 @@ function level_mt:append()
 		end
 	end
 
-	print("Candidates: ",#cand)
+	--print("Candidates: ",#cand)
 
 	if #cand>0 then
 		local ci = math.random(1,#cand)
@@ -152,20 +152,20 @@ function level_mt:append()
 			local collision = true
 			if aabb.x>=v.x+v.w or aabb.x+aabb.w<=v.x  then
 				collision = false
-				print("Escaped side")
+				--print("Escaped side")
 			end
 			if aabb.y>=v.y+v.h or aabb.y+aabb.h<=v.y then
 				collision = false
-				print("Escaped stack")
+				--print("Escaped stack")
 			end
 			if collision then
 				wrong = true
-				print("Colliddion")
+				--print("Colliddion")
 			end
 		end
 
 		if not wrong then
-			print("Adding a bro")
+			--print("Adding a bro")
 			table.remove(self.doors, cand[ci].i)
 			self:addModule(c.x-coord.x,c.y-coord.y,index,door.t)
 		end

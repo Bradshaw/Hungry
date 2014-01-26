@@ -7,8 +7,7 @@ end
 
 
 function state:enter()
-	world = love.physics.newWorld(0, 0, true)
-	world:setSleepingAllowed(false)
+	world = love.physics.newWorld(0, 0, false)
 
 	world:setCallbacks(function(...)
 		for i,v in ipairs(wcb) do
@@ -76,6 +75,7 @@ function state:update(dt)
 				timeleft = wait
 				if #player.all<1 then
 					table.insert(player.all, player.new(joystick, 144, 40))
+					player.all[1].human = true
 				else
 					table.insert(player.all, player.new(joystick, 262, 25))
 					player.all[2].main = weapon.ping()

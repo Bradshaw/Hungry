@@ -16,6 +16,11 @@ function state:enter()
 			enemy.new(math.random(0,1)*640,math.random()*640)
 		end
 	end
+
+
+	while #food.all<0 do
+		food.new()
+	end
 	--]]
 	spawntime = 1
 	time = 0
@@ -76,11 +81,10 @@ function state:update(dt)
 	---[[
 	if #enemy.all<math.min(100, time) and spawntime<=0 then
 		spawntime = 1 - (time/200)
-		if math.random()>0.5 then
-			enemy.new(math.random()*640,math.random(0,1)*640)
-		else
-			enemy.new(math.random(0,1)*640,math.random()*640)
-		end
+		enemy.new()
+	end
+	if #food.all<5  then
+		food.new()
 	end
 	--]]
 
@@ -97,9 +101,14 @@ function state:update(dt)
 		end
 	end
 
+	if player.all[1].x>12 and player.all[1].x<86 and
+		player.all[1].y>60 and player.all[1].y<165 and player.all[1]:interact() then
+		gstate.switch(warping)
+	end
 
 
 	world:update(dt) --this puts the world into motion
+	food.update(dt)
 	radar.update(dt)
 
 end
@@ -121,6 +130,7 @@ function state:draw()
 	for i,v in ipairs(weapon.all) do
 		v:draw()
 	end	
+	food.draw()
 	enemy.draw()
 	love.graphics.setColor(255,255,255)
 	bullet.draw()
@@ -146,6 +156,9 @@ function state:draw()
 	if player.all[2] and player.all[2].hp>0 then
 		map:drawMap()
 	end
+
+	love.graphics.setColor(0,0,180)
+	love.graphics.rectangle("fill", 0, (1-(player.all[1].hp)/100)*640, 20, ((player.all[1].hp)/100)*640)
 
 	love.graphics.print(love.timer.getFPS(),10,10)
 
