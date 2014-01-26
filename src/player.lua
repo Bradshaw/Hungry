@@ -127,8 +127,8 @@ function player_mt:drawShadow()
 			if d~=0 then
 				local nx = dx/d
 				local ny = dy/d
-				points[i] = points[i]+nx*4
-				points[j] = points[j]+ny*4
+				points[i] = points[i]+nx*0
+				points[j] = points[j]+ny*0
 			end
 			farpoints[i] = points[i]+dx*1000
 			farpoints[j] = points[j]+dy*1000

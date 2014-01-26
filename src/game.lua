@@ -9,7 +9,7 @@ end
 function state:enter()
 	weapon.all = {}
 	---[[
-	while #enemy.all<100 do
+	while #enemy.all<0 do
 		if math.random()>0.5 then
 			enemy.new(math.random()*640,math.random(0,1)*640)
 		else

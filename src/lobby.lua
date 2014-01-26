@@ -16,7 +16,7 @@ function state:enter()
 		end
 	end)	
 
-	needplayers = 2
+	needplayers = 1
 	player.all = {}
 	wait = 0
 	timeleft = wait

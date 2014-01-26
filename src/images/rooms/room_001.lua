@@ -1,5 +1,7 @@
 local room = {}
 
+room.size = {150, 100}
+
 room.exits = {}
 
 table.insert(room.exits, exit.left(48))
