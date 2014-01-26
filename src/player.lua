@@ -1,18 +1,28 @@
 local player_mt = {}
 player = {}
 
+player.quads = {}
+player.red = love.graphics.newImage("images/Red.png")
+player.blu = love.graphics.newImage("images/Blue.png")
+
+for i=0,3 do
+	table.insert(player.quads, love.graphics.newQuad(i*16, 0, 16, 16, 64, 16))
+end
+
 player.shadervig = love.graphics.newImage("images/vig.png")
 
-function player.new( joystick, x, y )
+function player.new( joystick, x, y, im )
 	local self = setmetatable({},{__index = player_mt})
 	self.joystick = joystick
 
 	self.hp = 100
 
-	self.isPlayer = true
+	self.frame = 1
 
+	self.isPlayer = true
+	self.im = im
 	self.main = weapon.pistol()
-	self.secondary = weapon.rail()
+	self.secondary = nil --weapon.rail()
 
 	self.speed = 100
 	self.aimx = 0
@@ -112,8 +122,15 @@ end
 function player_mt:draw(  )
 	if self.hp>0 then
 		love.graphics.setColor(255,255,255)
-		love.graphics.rectangle("fill",self.body:getX()-2,self.body:getY()-2, 4, 4)
-		love.graphics.line(self.body:getX(),self.body:getY(),self.body:getX()+self.aimx*8,self.body:getY()+self.aimy*8)
+		local r = math.atan2(self.aimy,self.aimx)+math.pi/2
+		love.graphics.draw(self.im, player.quads[self.frame],self.x, self.y, r, 1, 1, 8, 12)
+		--love.graphics.line(self.body:getX(),self.body:getY(),self.body:getX()+self.aimx*8,self.body:getY()+self.aimy*8)
+	end
+	if self.frame > 1 then
+		self.frame = self.frame+1
+	end
+	if self.frame > 4 then
+		self.frame = 1
 	end
 end
 

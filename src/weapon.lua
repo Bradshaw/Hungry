@@ -22,6 +22,7 @@ function weapon.pistol( ... )
 
 	self.fire = function(weap, x, y, dx, dy)
 		if weap.time==0 then
+			player.all[1].frame = 2
 			weapon.pistolsnd:rewind()
 			weapon.pistolsnd:play()
 			weapon.pistolsnd:setPitch(1.6+(math.random()-0.5)*0.1)
@@ -55,6 +56,7 @@ function weapon.rail( ... )
 	self.cooldown = 0.2
 	self.fire =  function(weap, x, y, dx, dy)
 		if weap.time==0 then
+			player.all[2].frame = 2
 			shake = shake + 0.4
 			weapon.railsnd:rewind()
 			weapon.railsnd:play()

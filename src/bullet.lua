@@ -3,6 +3,8 @@ bullet = {}
 
 bullet.all = {}
 
+bullet.im = love.graphics.newImage("images/red_bullet.png")
+
 function bullet.new( x, y, dx, dy )
 	local self = setmetatable({},{__index=bullet_mt})
 
@@ -79,5 +81,5 @@ function bullet_mt:update( dt )
 end
 
 function bullet_mt:draw(  )
-	love.graphics.circle("fill",self.x, self.y, 4)
+	love.graphics.draw(bullet.im, self.x, self.y, math.atan2(self.dy,self.dx)+math.pi/2,1,1,2, 3)
 end
