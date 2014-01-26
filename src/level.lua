@@ -51,11 +51,37 @@ function level.new(  )
 	end
 
 	self.map = {}
+	self.doors = {}
 	self.images = {}
 	self:addModule(300,300)
 
 
 	return self
+end
+
+function level_mt:append()
+	local index = math.random(1,#level.rooms)
+	local r = level.rooms[index]
+	local door = r.meta.exits(math.random(1,#r.meta.exits))
+	local search = ""
+	if door.t == "left" then
+		search = "right"
+	end
+	if door.t == "right" then
+		search = "left"
+	end
+	if door.t == "up" then
+		search = "down"
+	end
+	if door.t == "down" then
+		search = "up"
+	end
+	local cand = {}
+	for i,v in ipairs(self.doors) do
+		if v.t == search then
+			table.insert(cand, v)
+		end
+	end
 end
 
 function level_mt:addModule(x, y, index)
@@ -64,7 +90,7 @@ function level_mt:addModule(x, y, index)
 
 	for i,v in ipairs(r.meta.colliders) do
 		local wall = {}
-		wall.body = love.physics.newBody(world, x-v.w/2-v.x, y-v.h/2-v.y, "static") --place the body in the center of the world and make it dynamic, so it can move around
+		wall.body = love.physics.newBody(world, x+v.w/2+v.x, y+v.h/2+v.y, "static") --place the body in the center of the world and make it dynamic, so it can move around
 		wall.shape = love.physics.newRectangleShape( v.w, v.h ) --the ball's shape has a radius of 20
 		wall.fixture = love.physics.newFixture(wall.body, wall.shape, 1) -- Attach fixture to body and give it a density of 1.
 		wall.fixture:setUserData(self)
@@ -72,18 +98,53 @@ function level_mt:addModule(x, y, index)
 		--wall.body:setAngle(math.random()*math.pi*2)
 		table.insert(self.map,wall)
 	end
+
+	for i,v in ipairs(r.meta.exits) do
+		if v.t == "left" then
+			table.insert(self.doors, {
+				x = x,
+				y = y+v.c,
+				t = v.t
+			})
+		end
+		if v.t == "right" then
+			table.insert(self.doors, {
+				x = x+r.meta.size[1],
+				y = y+v.c,
+				t = v.t
+			})
+		end
+		if v.t == "up" then
+			table.insert(self.doors, {
+				x = x+v.c,
+				y = y,
+				t = v.t
+			})
+		end
+		if v.t == "down" then
+			table.insert(self.doors, {
+				x = x+v.c,
+				y = y+r.meta.size[2],
+				t = v.t
+			})
+		end
+	end
+
+
 	table.insert(self.images, {
-		x = x-r.meta.size[1],
-		y = y-r.meta.size[2],
+		x = x,
+		y = y,
 		im = index})
 
 end
 
 function level_mt:retex(  )
+	love.graphics.push()
+	love.graphics.translate(320-player.all[1].x, 320-player.all[1].y)
 	love.graphics.setCanvas(self.maptex)
 	love.graphics.setColor(0,0,0)
 	love.graphics.rectangle("fill",0,0,1024,1024)
-	love.graphics.setColor(0,32,92)
+	love.graphics.setColor(92,92,92)
 	love.graphics.setLineWidth(3)
 	for i=1,self.xsize do
 		for j=1,self.ysize do
@@ -108,6 +169,7 @@ function level_mt:retex(  )
 	end
 	love.graphics.setLineWidth(1)
 	love.graphics.setCanvas()
+	love.graphics.pop()
 end
 
 function level_mt:draw( ... )
@@ -125,11 +187,15 @@ function level_mt:draw( ... )
 		love.graphics.draw(level.rooms[v.im].image,v.x, v.y)
 	end
 
+	for i,v in ipairs(self.doors) do
+		love.graphics.circle("fill",v.x,v.y,3)
+	end
+
 end
 
 function level_mt:drawMap( ... )
-	if not self.texted then
-		self:retex()
+	if true or not self.texted then
+		--self:retex()
 	end
 	love.graphics.setColor(255,255,255)
 	love.graphics.setBlendMode("additive")
@@ -154,8 +220,8 @@ function level_mt:drawShadow(x, y)
 			if d~=0 then
 				local nx = dx/d
 				local ny = dy/d
-				points[i] = points[i]+nx*2
-				points[j] = points[j]+ny*2
+				points[i] = points[i]+nx*0
+				points[j] = points[j]+ny*0
 			end
 			farpoints[i] = points[i]+dx*1000
 			farpoints[j] = points[j]+dy*1000

@@ -1,6 +1,7 @@
 local player_mt = {}
 player = {}
 
+player.shadervig = love.graphics.newImage("images/vig.png")
 
 function player.new( joystick )
 	local self = setmetatable({},{__index = player_mt})
@@ -146,4 +147,6 @@ function player_mt:drawShadow()
 			love.graphics.polygon("fill", x1, y1, x2, y2, x4, y4, x3, y3)
 		end
 	end
+	love.graphics.setColor(0,0,0)
+	love.graphics.draw(player.shadervig,self.x, self.y, 0, 1, 1, 640, 640)
 end
