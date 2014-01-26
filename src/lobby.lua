@@ -92,18 +92,8 @@ function state:draw()
 
 	local joysticks = love.joystick.getJoysticks()
 	love.graphics.print("Players:"..#player.all, 10, 0)
-	love.graphics.print("Play in:"..math.floor(timeleft*100)/100, 10, 20)
 
-	local l = 3
-	for i, joystick in ipairs(joysticks) do
-		local buttons = joystick:getButtonCount()
-		for b=1,buttons do
-			if joystick:isDown(b) then
-				love.graphics.print(joystick:getName().." button "..b, 10, l * 20)
-				l=l+1
-			end
-		end
-	end
+	love.graphics.print("When two players have connected, the game will start", 100, 100)
 end
 
 return state

@@ -4,16 +4,24 @@ food = {}
 food.all = {}
 food.spawns = {}
 
+food.im = {}
+food.im[1] = love.graphics.newImage("images/candy_crunch.png")
+food.im[2] = love.graphics.newImage("images/mc_guffin.png")
+
+food.snd = love.audio.newSource("audio/eat.ogg")
+
 addPhysCallback(function(f1, f2, contact)
 	local u1 = f1:getUserData()
 	local u2 = f2:getUserData()
 	if u1.isfood and u2.human then
 		u1.purge = true
 		u2:feed()
+		food.snd:play()
 	end
 	if u2.isfood and u1.human then
 		u2.purge = true
 		u1:feed()
+		food.snd:play()
 	end
 	
 end)
@@ -21,7 +29,7 @@ end)
 
 function food.new( x, y )
 	local self = setmetatable({},{__index = food_mt})
-
+	self.im = math.random(1,2)
 	self.isfood = true
 	local wallHit = false
 	while not wallHit do
@@ -50,7 +58,7 @@ function food.new( x, y )
 	self.body:setLinearDamping(20)
 	self.body:setFixedRotation(true)
 	self.body:setMass(1)
-	self.shape = love.physics.newCircleShape(6) --the ball's shape has a radius of 20
+	self.shape = love.physics.newCircleShape(4) --the ball's shape has a radius of 20
 	self.fixture = love.physics.newFixture(self.body, self.shape, 1) -- Attach fixture to body and give it a density of 1.
 	self.fixture:setUserData(self)
 	self.fixture:setRestitution(0.1) --let the ball bounce
@@ -86,6 +94,7 @@ function food_mt:update( dt )
 end
 
 function food_mt:draw(  )
-	love.graphics.setColor(0,255,0)
-	love.graphics.circle("fill",self.x, self.y, 6)
+	love.graphics.setColor(255,255,255)
+	love.graphics.draw(food.im[self.im], self.x, self.y, 0, 1, 1, 8, 8)
+	
 end

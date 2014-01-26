@@ -4,6 +4,8 @@ enemy = {}
 enemy.all = {}
 enemy.spawns = {}
 
+enemy.im = love.graphics.newImage("images/Enemy.png")
+
 enemy.phit = love.audio.newSource("audio/ow.ogg")
 
 addPhysCallback(function(f1, f2, contact)
@@ -29,7 +31,7 @@ end)
 
 function enemy.new( x, y )
 	local self = setmetatable({},{__index = enemy_mt})
-
+	self.frame = 1
 	self.isEnemy = true
 	local wallHit = false
 	while not wallHit do
@@ -129,6 +131,10 @@ function enemy_mt:update( dt )
 		local d = math.sqrt(dx*dx+dy*dy)
 		local nx = dx/d
 		local ny = dy/d
+		self.frame = self.frame+1
+		if self.frame > 4 then
+			self.frame = 1
+		end
 		if d>0 then
 			self.body:applyForce(nx*45, ny*45)
 		end
@@ -139,6 +145,13 @@ function enemy_mt:update( dt )
 end
 
 function enemy_mt:draw(  )
-	love.graphics.setColor(255,0,0)
-	love.graphics.circle("fill",self.x, self.y, 6)
+	love.graphics.setColor(255,255,255)
+	local r = 0
+	if self.target then
+		local targ = self.target
+		local dx = targ.x-self.x
+		local dy = targ.y-self.y
+		r = math.atan2(dy,dx)+math.pi/2
+	end
+	love.graphics.draw(enemy.im, player.quads[self.frame],self.x, self.y, r, 1, 1, 8, 12)
 end
