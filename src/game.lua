@@ -71,7 +71,7 @@ function state:update(dt)
 	end
 
 	---[[
-	while #enemy.all<0 do
+	while #enemy.all<300 do
 		if math.random()>0.5 then
 			enemy.new(math.random()*640,math.random(0,1)*640)
 		else
@@ -142,6 +142,8 @@ function state:draw()
 	if player.all[2] and player.all[2].hp>0 then
 		map:drawMap()
 	end
+
+	love.graphics.print(love.timer.getFPS(),10,10)
 
 end
 
