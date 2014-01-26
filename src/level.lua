@@ -52,8 +52,44 @@ function level.new(  )
 
 	self.map = {}
 	self.doors = {}
+	self.blocked = {}
 	self.images = {}
-	self:addModule(300,300)
+	self:addModule(0,0,2)
+	for i=1,50 do
+		self:append()
+	end
+	local remove = {}
+	for i,v in ipairs(self.doors) do
+		for j,u in ipairs(self.doors) do
+			if not i==j then
+				if useful.almost(v.x, u.x) and useful.almost(v.y, u.y) then
+					table.insert(remove, i)
+				end
+			end
+		end
+	end
+	for i=#remove,1,-1 do
+		table.remove(self.doors, remove[i])
+	end
+	for i,v in ipairs(self.doors) do
+		local h = 0
+		local w = 0
+		if v.t == "left" or v.t == "right" then
+			w = 6
+			h = 50
+		else
+			w = 50
+			h = 6
+		end
+		local wall = {}
+		wall.body = love.physics.newBody(world, v.x, v.y, "static") --place the body in the center of the world and make it dynamic, so it can move around
+		wall.shape = love.physics.newRectangleShape( w, h ) --the ball's shape has a radius of 20
+		wall.fixture = love.physics.newFixture(wall.body, wall.shape, 1) -- Attach fixture to body and give it a density of 1.
+		wall.fixture:setUserData(self)
+		wall.fixture:setRestitution(0.1) --let the ball bounce
+		--wall.body:setAngle(math.random()*math.pi*2)
+		table.insert(self.map,wall)
+	end
 
 
 	return self
@@ -62,29 +98,84 @@ end
 function level_mt:append()
 	local index = math.random(1,#level.rooms)
 	local r = level.rooms[index]
-	local door = r.meta.exits(math.random(1,#r.meta.exits))
+	local door = r.meta.exits[math.random(1,#r.meta.exits)]
+	local coord
 	local search = ""
 	if door.t == "left" then
 		search = "right"
+		coord ={
+			x = 0,
+			y = door.c
+		}
 	end
 	if door.t == "right" then
 		search = "left"
+		coord ={
+			x = r.meta.size[1],
+			y = door.c
+		}
 	end
 	if door.t == "up" then
 		search = "down"
+		coord ={
+			x = door.c,
+			y = 0
+		}
 	end
 	if door.t == "down" then
 		search = "up"
+		coord ={
+			x = door.c,
+			y = r.meta.size[2]
+		}
 	end
 	local cand = {}
 	for i,v in ipairs(self.doors) do
 		if v.t == search then
-			table.insert(cand, v)
+			table.insert(cand, {i=i, v=v})
+		end
+	end
+
+	print("Candidates: ",#cand)
+
+	if #cand>0 then
+		local ci = math.random(1,#cand)
+		local c = cand[ci].v
+		local aabb = {
+			x = c.x-coord.x,
+			y = c.y-coord.y,
+			w = r.meta.size[1],
+			h = r.meta.size[2]
+		}
+		local wrong = false
+		for i,v in ipairs(self.blocked) do
+			local collision = true
+			if aabb.x>=v.x+v.w or aabb.x+aabb.w<=v.x  then
+				collision = false
+				print("Escaped side")
+			end
+			if aabb.y>=v.y+v.h or aabb.y+aabb.h<=v.y then
+				collision = false
+				print("Escaped stack")
+			end
+			if collision then
+				wrong = true
+				print("Colliddion")
+			end
+		end
+
+		if not wrong then
+			print("Adding a bro")
+			table.remove(self.doors, cand[ci].i)
+			self:addModule(c.x-coord.x,c.y-coord.y,index,door.t)
 		end
 	end
 end
 
-function level_mt:addModule(x, y, index)
+function level_mt:isDupe(a)
+	return false
+end
+function level_mt:addModule(x, y, index, discard)
 	local index = index or math.random(1,#level.rooms)
 	local r = level.rooms[index]
 
@@ -99,34 +190,68 @@ function level_mt:addModule(x, y, index)
 		table.insert(self.map,wall)
 	end
 
+	for i,v in ipairs(r.meta.spawns) do
+		table.insert(enemy.spawns,{
+			x1 = v.x1+x,
+			y1 = v.y1+y,
+			x2 = v.x2+x,
+			y2 = v.y2+y
+		})
+	end
+
+	table.insert(self.blocked, {
+		x=x,
+		y=y,
+		w = r.meta.size[1],
+		h = r.meta.size[2]
+	})
+
 	for i,v in ipairs(r.meta.exits) do
-		if v.t == "left" then
-			table.insert(self.doors, {
-				x = x,
-				y = y+v.c,
-				t = v.t
-			})
-		end
-		if v.t == "right" then
-			table.insert(self.doors, {
-				x = x+r.meta.size[1],
-				y = y+v.c,
-				t = v.t
-			})
-		end
-		if v.t == "up" then
-			table.insert(self.doors, {
-				x = x+v.c,
-				y = y,
-				t = v.t
-			})
-		end
-		if v.t == "down" then
-			table.insert(self.doors, {
-				x = x+v.c,
-				y = y+r.meta.size[2],
-				t = v.t
-			})
+		if not discard or discard ~= v.t then
+			local dupe = false
+			--[[
+			for j,u in ipairs(self.doors) do
+				if useful.almost(v.x, u.x) or useful.almost(v.y, u.y) then
+					dupe = true
+				end
+			end
+			--]]
+			if v.t == "left" then
+				if not self:isDupe({x, y+v.c}) then
+					table.insert(self.doors, {
+						x = x,
+						y = y+v.c,
+						t = v.t
+					})
+				end
+			end
+			if v.t == "right" then
+				if not self:isDupe({x+r.meta.size[1], y+v.c}) then
+					table.insert(self.doors, {
+						x = x+r.meta.size[1],
+						y = y+v.c,
+						t = v.t
+					})
+				end
+			end
+			if v.t == "up" then
+				if not self:isDupe({x+v.c, y}) then
+					table.insert(self.doors, {
+						x = x+v.c,
+						y = y,
+						t = v.t
+					})
+				end
+			end
+			if v.t == "down" then
+				if not self:isDupe({x+v.c, y+r.meta.size[2]}) then
+					table.insert(self.doors, {
+						x = x+v.c,
+						y = y+r.meta.size[2],
+						t = v.t
+					})
+				end
+			end
 		end
 	end
 
@@ -140,11 +265,12 @@ end
 
 function level_mt:retex(  )
 	love.graphics.push()
-	love.graphics.translate(320-player.all[1].x, 320-player.all[1].y)
-	love.graphics.setCanvas(self.maptex)
+	self.maptex:clear()
 	love.graphics.setColor(0,0,0)
 	love.graphics.rectangle("fill",0,0,1024,1024)
-	love.graphics.setColor(92,92,92)
+	love.graphics.translate(320-player.all[1].x, 320-player.all[1].y)
+	love.graphics.setCanvas(self.maptex)
+	love.graphics.setColor(0,16,32)
 	love.graphics.setLineWidth(3)
 	for i=1,self.xsize do
 		for j=1,self.ysize do
@@ -187,10 +313,6 @@ function level_mt:draw( ... )
 		love.graphics.draw(level.rooms[v.im].image,v.x, v.y)
 	end
 
-	for i,v in ipairs(self.doors) do
-		love.graphics.circle("fill",v.x,v.y,3)
-	end
-
 end
 
 function level_mt:drawMap( ... )
@@ -220,8 +342,8 @@ function level_mt:drawShadow(x, y)
 			if d~=0 then
 				local nx = dx/d
 				local ny = dy/d
-				points[i] = points[i]+nx*0
-				points[j] = points[j]+ny*0
+				points[i] = points[i]+nx*4
+				points[j] = points[j]+ny*4
 			end
 			farpoints[i] = points[i]+dx*1000
 			farpoints[j] = points[j]+dy*1000

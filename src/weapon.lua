@@ -7,7 +7,7 @@ function weapon.new()
 	local self = setmetatable({},{__index = weapon_mt})	
 
 	self.rot = math.random()*math.pi*2
-	self.cooldown = 0.1
+	self.cooldown = 0.15
 	self.time = 0
 
 	return self
@@ -18,8 +18,8 @@ function weapon.pistol( ... )
 
 	self.fire = function(weap, x, y, dx, dy)
 		if weap.time==0 then
-			shake=shake+0.1
-			weap.time = weap.cooldown
+			shake=shake+0.15
+			weap.time = weap.cooldown-math.random()*weap.cooldown*0.3
 			bullet.pistol(x, y, dx*800, dy*800)
 		end
 	end
@@ -48,8 +48,8 @@ function weapon.rail( ... )
 	self.cooldown = 0.2
 	self.fire =  function(weap, x, y, dx, dy)
 		if weap.time==0 then
-			shake = shake + 0.25
-			weap.time = weap.cooldown
+			shake = shake + 0.4
+			weap.time = weap.cooldown-math.random()*weap.cooldown*0.3
 			local xh = x+dx*1000
 			local yh = y+dy*1000
 			local hits={{xh,yh}}

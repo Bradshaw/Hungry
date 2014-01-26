@@ -27,5 +27,9 @@ table.insert(room.colliders, collider.new(87, 72,  102, 100))
 table.insert(room.colliders, collider.new(129, 0,  150, 26))
 table.insert(room.colliders, collider.new(129, 72,  150, 100))
 
+room.spawns = {}
+
+table.insert(room.spawns, spawn.new(20,20,130,80))
+
 
 return room

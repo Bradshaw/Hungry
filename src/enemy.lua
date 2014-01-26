@@ -2,6 +2,7 @@ local enemy_mt = {}
 enemy = {}
 
 enemy.all = {}
+enemy.spawns = {}
 
 addPhysCallback(function(f1, f2, contact)
 	local u1 = f1:getUserData()
@@ -26,8 +27,9 @@ function enemy.new( x, y )
 	self.isEnemy = true
 	local wallHit = false
 	while not wallHit do
-		self.x = math.random(0,640)
-		self.y = math.random(0,640)
+		local spawn = enemy.spawns[math.random(1,#enemy.spawns)]
+		self.x = math.random(spawn.x1,spawn.x2)
+		self.y = math.random(spawn.y1,spawn.y2)
 		wallHit = false
 		for i=1,#player.all do
 
@@ -131,5 +133,6 @@ function enemy_mt:update( dt )
 end
 
 function enemy_mt:draw(  )
-	love.graphics.circle("line",self.x, self.y, 6)
+	love.graphics.setColor(255,0,0)
+	love.graphics.circle("fill",self.x, self.y, 6)
 end

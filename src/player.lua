@@ -10,14 +10,14 @@ function player.new( joystick )
 	self.isPlayer = true
 
 	self.main = weapon.pistol()
-	self.secondary = nil --weapon.rail()
+	self.secondary = nil -- weapon.ping()
 
 	self.speed = 100
 	self.aimx = 0
 	self.aimy = -1
 
-	self.x = math.random(0,600)
-	self.y = math.random(0,600)
+	self.x = math.random(20,80)
+	self.y = math.random(20,80)
 
 	self.body = love.physics.newBody(world, self.x, self.y, "dynamic") --place the body in the center of the world and make it dynamic, so it can move around
 	self.body:setLinearDamping(20)
@@ -93,6 +93,7 @@ function player_mt:update( dt )
 end
 
 function player_mt:draw(  )
+	love.graphics.setColor(255,255,255)
 	love.graphics.rectangle("fill",self.body:getX()-2,self.body:getY()-2, 4, 4)
 	love.graphics.line(self.body:getX(),self.body:getY(),self.body:getX()+self.aimx*8,self.body:getY()+self.aimy*8)
 end
@@ -148,5 +149,5 @@ function player_mt:drawShadow()
 		end
 	end
 	love.graphics.setColor(0,0,0)
-	love.graphics.draw(player.shadervig,self.x, self.y, 0, 1, 1, 640, 640)
+	love.graphics.draw(player.shadervig,self.x, self.y, 0, 0.75, 0.75, 640, 640)
 end
