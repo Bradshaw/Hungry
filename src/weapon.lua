@@ -73,7 +73,7 @@ function weapon.rail( ... )
 			for i=-5,5 do
 				world:rayCast( x+perpx, y+perpy, hit[1]+perpx, hit[2]+perpy, function(fix, xc, yc, xn, yn, frac)
 					local u = fix:getUserData()
-					if u and u.hp then
+					if u and u.isEnemy then
 						u.hp = u.hp-10
 					end
 					return -1

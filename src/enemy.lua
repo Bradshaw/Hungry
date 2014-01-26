@@ -48,7 +48,7 @@ function enemy.new( x, y )
 	end
 
 
-	self.hp = 3
+	self.hp = 7
 	self.forget = math.random()*5
 	self.body = love.physics.newBody(world, self.x, self.y, "dynamic") --place the body in the center of the world and make it dynamic, so it can move around
 	self.body:setLinearDamping(20)
@@ -96,7 +96,7 @@ function enemy_mt:update( dt )
 	if not self.target or self.target.purge then
 		local p = {}
 		for i,v in ipairs(player.all) do
-			if not v.purge then
+			if not (v.hp<=0) then
 				table.insert(p, v)
 			end
 		end
@@ -124,7 +124,7 @@ function enemy_mt:update( dt )
 		local nx = dx/d
 		local ny = dy/d
 		if d>0 then
-			self.body:applyForce(nx*35, ny*35)
+			self.body:applyForce(nx*45, ny*45)
 		end
 	end
 

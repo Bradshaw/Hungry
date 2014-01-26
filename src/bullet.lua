@@ -71,7 +71,7 @@ function bullet_mt:update( dt )
 			local speed = math.sqrt(self.dx*self.dx+self.dy*self.dy)
 			local nx = self.dx/speed
 			local ny = self.dy/speed
-			v.body:applyLinearImpulse(nx*5,ny*5)
+			v.body:applyLinearImpulse(nx*2,ny*2)
 			self:doDamage(v)
 			return
 		end

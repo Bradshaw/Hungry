@@ -7,6 +7,8 @@ function player.new( joystick )
 	local self = setmetatable({},{__index = player_mt})
 	self.joystick = joystick
 
+	self.hp = 100
+
 	self.isPlayer = true
 
 	self.main = weapon.pistol()
@@ -41,6 +43,7 @@ function player_mt:whack( enemy )
 		local ny = dy/d
 		self.body:applyLinearImpulse(nx*4,ny*4)
 	end
+	self.hp = math.max(0,self.hp-math.random(5,20))
 end
 
 function player_mt:getWeapon()
@@ -48,54 +51,58 @@ function player_mt:getWeapon()
 end
 
 function player_mt:update( dt )
-	local movex = self.joystick:getAxis(1)
-	local movey = self.joystick:getAxis(2)
-	local targx = self.joystick:getAxis(3)
-	local targy = self.joystick:getAxis(4)
+	if self.hp>0 then
+		local movex = self.joystick:getAxis(1)
+		local movey = self.joystick:getAxis(2)
+		local targx = self.joystick:getAxis(3)
+		local targy = self.joystick:getAxis(4)
 
-	local doMove = (useful.deadzone(movex)~=0 or useful.deadzone(movey)~=0)
-	local doTarg = (useful.deadzone(targx)~=0 or useful.deadzone(targy)~=0)
-	
+		local doMove = (useful.deadzone(movex)~=0 or useful.deadzone(movey)~=0)
+		local doTarg = (useful.deadzone(targx)~=0 or useful.deadzone(targy)~=0)
+		
 
-	if doMove then
-		local d = math.sqrt(movex*movex+movey*movey)
-		local nx = movex/d
-		local ny = movey/d
-		self.aimx = nx
-		self.aimy = ny
+		if doMove then
+			local d = math.sqrt(movex*movex+movey*movey)
+			local nx = movex/d
+			local ny = movey/d
+			self.aimx = nx
+			self.aimy = ny
 
-		self.body:applyForce(movex*10, movey*10)
+			self.body:applyForce(movex*10, movey*10)
+		end
+
+		if doTarg then
+			local d = math.sqrt(targx*targx+targy*targy)
+			local nx = targx/d
+			local ny = targy/d
+			self.aimx = nx
+			self.aimy = ny
+		end
+
+		self.main:updateOnCharacter(dt)
+		if self.secondary then
+			self.secondary:updateOnCharacter(dt)
+		end
+		if self.joystick:isDown(9) then
+			self:getWeapon():fire(self.x,self.y,self.aimx,self.aimy)
+		end
+		if self.joystick:isDown(8) then
+			--radar.ping(self.x, self.y)
+			self.main:fire(self.x,self.y,self.aimx,self.aimy)
+		end
+
+		self.x = self.body:getX()
+		self.y = self.body:getY()
 	end
-
-	if doTarg then
-		local d = math.sqrt(targx*targx+targy*targy)
-		local nx = targx/d
-		local ny = targy/d
-		self.aimx = nx
-		self.aimy = ny
-	end
-
-	self.main:updateOnCharacter(dt)
-	if self.secondary then
-		self.secondary:updateOnCharacter(dt)
-	end
-	if self.joystick:isDown(9) then
-		self:getWeapon():fire(self.x,self.y,self.aimx,self.aimy)
-	end
-	if self.joystick:isDown(8) then
-		--radar.ping(self.x, self.y)
-		self.main:fire(self.x,self.y,self.aimx,self.aimy)
-	end
-
-	self.x = self.body:getX()
-	self.y = self.body:getY()
 
 end
 
 function player_mt:draw(  )
-	love.graphics.setColor(255,255,255)
-	love.graphics.rectangle("fill",self.body:getX()-2,self.body:getY()-2, 4, 4)
-	love.graphics.line(self.body:getX(),self.body:getY(),self.body:getX()+self.aimx*8,self.body:getY()+self.aimy*8)
+	if self.hp>0 then
+		love.graphics.setColor(255,255,255)
+		love.graphics.rectangle("fill",self.body:getX()-2,self.body:getY()-2, 4, 4)
+		love.graphics.line(self.body:getX(),self.body:getY(),self.body:getX()+self.aimx*8,self.body:getY()+self.aimy*8)
+	end
 end
 
 function player_mt:drawShadow()
