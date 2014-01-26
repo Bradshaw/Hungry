@@ -33,7 +33,5 @@ collider.tiles(room.colliders,
 
 room.spawns = {}
 
-table.insert(room.spawns, spawn.new(20,20,130,80))
-
 
 return room
