@@ -23,7 +23,7 @@ function state:enter()
 	end
 	--]]
 	spawntime = 1
-	time = 0
+	time = 20
 end
 
 
@@ -70,6 +70,8 @@ end
 
 
 function state:update(dt)
+	player.all[1].hp = player.all[1].hp - dt
+	player.all[2].hp = math.min(player.all[2].hp + dt,100)
 	time = math.min(100, time+dt)
 	spawntime = spawntime - dt
 	shake = math.max(0,shake-shake*10*dt-dt)
@@ -157,10 +159,12 @@ function state:draw()
 		map:drawMap()
 	end
 
-	love.graphics.setColor(0,0,180)
-	love.graphics.rectangle("fill", 0, (1-(player.all[1].hp)/100)*640, 20, ((player.all[1].hp)/100)*640)
+	love.graphics.setColor(120,30,30)
+	love.graphics.rectangle("fill", 0, (1-(player.all[1].hp)/100)*640, 5, ((player.all[1].hp)/100)*640)
+	love.graphics.setColor(30,30,120)
+	love.graphics.rectangle("fill", 635, (1-(player.all[2].hp)/100)*640, 5, ((player.all[2].hp)/100)*640)
 
-	love.graphics.print(love.timer.getFPS(),10,10)
+	--love.graphics.print(love.timer.getFPS(),10,10)
 
 end
 

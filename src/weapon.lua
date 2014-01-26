@@ -1,6 +1,10 @@
 local weapon_mt = {}
 weapon = {}
 
+weapon.railsnd = love.audio.newSource("audio/rail.ogg")
+weapon.pistolsnd = love.audio.newSource("audio/pistol.ogg")
+weapon.pistolsnd:setVolume(0.6)
+
 weapon.all = {}
 
 function weapon.new()
@@ -18,6 +22,9 @@ function weapon.pistol( ... )
 
 	self.fire = function(weap, x, y, dx, dy)
 		if weap.time==0 then
+			weapon.pistolsnd:rewind()
+			weapon.pistolsnd:play()
+			weapon.pistolsnd:setPitch(1.6+(math.random()-0.5)*0.1)
 			shake=shake+0.15
 			weap.time = weap.cooldown-math.random()*weap.cooldown*0.3
 			bullet.pistol(x, y, dx*800, dy*800)
@@ -49,6 +56,9 @@ function weapon.rail( ... )
 	self.fire =  function(weap, x, y, dx, dy)
 		if weap.time==0 then
 			shake = shake + 0.4
+			weapon.railsnd:rewind()
+			weapon.railsnd:play()
+			weapon.railsnd:setPitch(1.3+(math.random()-0.5)*0.3)
 			weap.time = weap.cooldown-math.random()*weap.cooldown*0.3
 			local xh = x+dx*1000
 			local yh = y+dy*1000

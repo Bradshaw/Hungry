@@ -4,16 +4,22 @@ enemy = {}
 enemy.all = {}
 enemy.spawns = {}
 
+enemy.phit = love.audio.newSource("audio/ow.ogg")
+
 addPhysCallback(function(f1, f2, contact)
 	local u1 = f1:getUserData()
 	local u2 = f2:getUserData()
 	if u1.isEnemy then
 		if u2.isPlayer then
+			enemy.phit:rewind()
+			enemy.phit:play()
 			u2:whack(u1)
 		end
 	end
 	if u2.isEnemy then
 		if u1.isPlayer then
+			enemy.phit:rewind()
+			enemy.phit:play()
 			u1:whack(u2)
 		end
 	end

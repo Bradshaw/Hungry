@@ -5,6 +5,9 @@ function love.load(arg)
 	function addPhysCallback(f)
 		table.insert(wcb, f)
 	end
+	music = love.audio.newSource("audio/music.ogg")
+	music:setLooping(true)
+	music:play()
 
 	require("useful")
 	require("levelgen")

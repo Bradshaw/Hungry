@@ -1,5 +1,10 @@
 radar = {}
 
+
+radar.snd = love.audio.newSource("audio/ping.ogg")
+radar.snd:setVolume(0.5)
+radar.snd:setPitch(2)
+
 radar.r1 = 10000
 radar.r2 = 10000
 radar.x = 320
@@ -19,6 +24,8 @@ function radar.ping(x,y)
 	radar.r2 = 0
 	radar.x = x
 	radar.y = y
+	radar.snd:rewind()
+	radar.snd:play()
 end
 
 radar.spotted = {}
