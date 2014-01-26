@@ -33,13 +33,13 @@ function enemy.new( x, y )
 		wallHit = false
 		for i=1,#player.all do
 
-			local cand = player.all[math.random(1,#player.all)]
+			local cand = player.all[i]
 
 			world:rayCast( self.x, self.y, cand.x, cand.y, function(fix, xc, yc, xn, yn, frac)
 				local u = fix:getUserData()
 				if u and u.isAWall then
 					wallHit = true
-					return 0
+					return -1
 				end
 				return -1
 			end )

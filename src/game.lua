@@ -17,6 +17,8 @@ function state:enter()
 		end
 	end
 	--]]
+	spawntime = 1
+	time = 0
 end
 
 
@@ -63,7 +65,8 @@ end
 
 
 function state:update(dt)
-
+	time = math.min(100, time+dt)
+	spawntime = spawntime - dt
 	shake = math.max(0,shake-shake*10*dt-dt)
 
 	for i,v in ipairs(player.all) do
@@ -71,7 +74,8 @@ function state:update(dt)
 	end
 
 	---[[
-	while #enemy.all<100 do
+	if #enemy.all<math.min(100, time) and spawntime<=0 then
+		spawntime = 1 - (time/200)
 		if math.random()>0.5 then
 			enemy.new(math.random()*640,math.random(0,1)*640)
 		else

@@ -74,8 +74,10 @@ function state:update(dt)
 		for b=1,buttons do
 			if joystick:isDown(b) then
 				timeleft = wait
-				table.insert(player.all, player.new(joystick))
-				if #player.all==2 then
+				if #player.all<1 then
+					table.insert(player.all, player.new(joystick, 144, 40))
+				else
+					table.insert(player.all, player.new(joystick, 262, 25))
 					player.all[2].main = weapon.ping()
 					player.all[2].secondary = weapon.rail()
 				end

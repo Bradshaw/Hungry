@@ -3,7 +3,7 @@ player = {}
 
 player.shadervig = love.graphics.newImage("images/vig.png")
 
-function player.new( joystick )
+function player.new( joystick, x, y )
 	local self = setmetatable({},{__index = player_mt})
 	self.joystick = joystick
 
@@ -18,8 +18,8 @@ function player.new( joystick )
 	self.aimx = 0
 	self.aimy = -1
 
-	self.x = math.random(64,64)
-	self.y = math.random(64,64)
+	self.x = x --math.random(64,64)
+	self.y = y --math.random(64,64)
 
 	self.body = love.physics.newBody(world, self.x, self.y, "dynamic") --place the body in the center of the world and make it dynamic, so it can move around
 	self.body:setLinearDamping(20)
@@ -43,7 +43,7 @@ function player_mt:whack( enemy )
 		local ny = dy/d
 		self.body:applyLinearImpulse(nx*4,ny*4)
 	end
-	self.hp = math.max(0,self.hp-math.random(5,20))
+	--self.hp = math.max(0,self.hp-math.random(5,20))
 end
 
 function player_mt:getWeapon()
